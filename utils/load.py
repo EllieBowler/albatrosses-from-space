@@ -4,6 +4,12 @@ import cv2
 
 
 def load_image_vgg16(path, method=cv2.INTER_LINEAR):
+    """
+    Load images ready to feed through the network
+    :param path: path to an npx file containing the panchromatic and multispectral dataset
+    :param method: method for interpolating multispectral dataset (default bilinear)
+    :return: 5 channel stacked array, normalised according to vgg16
+    """
 
     # Take mean and std for vgg16 and expand for extra channels
     MODEL_MEAN = np.array([0.485, 0.456, 0.406])
@@ -11,13 +17,18 @@ def load_image_vgg16(path, method=cv2.INTER_LINEAR):
     MODEL_MEAN_X = np.insert(MODEL_MEAN, [0, 3], MODEL_MEAN.mean())
     MODEL_STD_X = np.insert(MODEL_STD, [0, 3], MODEL_STD.mean())
 
+    # path to npz file containing PAN (1 channel) and MS (4 channel)
     img = np.load(path)
+    # Divide by max to get values in 0-1 range
     pan = img['I_PAN'] / 2047.
     ms = img['I_MS'] / 2047.
 
+    # Dimensions of the PAN patch
     pan_channels, pan_height, pan_width = pan.shape
+    # Upsample MS channels to match
     ms_up = interp_method_cv2(ms, pan_height, pan_width, method)
 
+    # stack channels and standardise
     img = np.concatenate((pan, ms_up), axis=0)
     img = (img - MODEL_MEAN_X[:, None, None]) / MODEL_STD_X[:, None, None]
     return img.astype(np.float32)

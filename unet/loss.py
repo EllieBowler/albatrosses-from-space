@@ -4,7 +4,10 @@ import torch.nn as nn
 
 
 class FocalLoss(nn.Module):
-
+    """
+    Class defining the focal loss criterion from:
+    Lin, Tsung-Yi, et al. 'Focal loss for dense object detection.'
+    """
     def __init__(self, gamma=2, alpha=0.25, eps=1e-7):
         super(FocalLoss, self).__init__()
         self.gamma = gamma
@@ -13,10 +16,8 @@ class FocalLoss(nn.Module):
         self.count = 0
 
     def forward(self, prediction_gt, target_gt, inputs=None):
-        # GT loss #
         targets_gt_onehot = torch.zeros_like(prediction_gt)
         targets_gt_onehot.scatter_(1, target_gt, 1.0)
-        positive_targets_gt = torch.clamp((target_gt != 0).float().sum(), min=1.0)
 
         prob_gt = F.softmax(prediction_gt, dim=1)  # softmax over depth (class masks)
 

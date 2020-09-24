@@ -19,37 +19,6 @@ class double_conv(nn.Module):
         return x
 
 
-class inconv(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(inconv, self).__init__()
-        self.conv = double_conv(in_channels, out_channels)
-
-    def forward(self, x):
-        x = self.conv(x)
-        return x
-
-
-class down(nn.Module):
-    def __init__(self, in_channels, out_channels, dropout):
-        super(down, self).__init__()
-
-        if dropout:
-            self.mpconv = nn.Sequential(
-                nn.MaxPool2d(2),
-                double_conv(in_channels, out_channels),
-                nn.Dropout(0.5)
-            )
-        else:
-            self.mpconv = nn.Sequential(
-                nn.MaxPool2d(2),
-                double_conv(in_channels, out_channels)
-            )
-
-    def forward(self, x):
-        x = self.mpconv(x)
-        return x
-
-
 class up(nn.Module):
     def __init__(self, in_channels, out_channels, bilinear):
         super(up, self).__init__()

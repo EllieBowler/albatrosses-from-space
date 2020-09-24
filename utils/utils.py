@@ -25,12 +25,11 @@ def interp_method_cv2(mult, imheight, imwidth, method):
     return mult_up.astype(mult.dtype)
 
 
-
 def augment_batch(batch_X, batch_y):
     """
     Augment images using flips around the lines of symmetry
     :param batch_X: The input images
-    :param batch_y: The target patches
+    :param batch_y: The target dataset
     :return: Inputs and targets randomly flipped
     """
     # n_samples = len(batch_X)
